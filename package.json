@@ -2,7 +2,8 @@
   "license": "MIT",
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "build:sdk": "cd sdk && yarn run build"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.27.0",

@@ -34,9 +34,21 @@ avm use latest
 anchor --version
 ```
 
+### Just
+
+The project uses [Just](https://github.com/casey/just#installation) to save and run project specific commands.
+
 Now, you are ready to work on Solstreams.
 
 ## Development
+
+The project uses `Just ` to save project specific commands. Use the command
+
+```bash
+just -l
+```
+
+to list all options.
 
 ## Build
 
@@ -81,6 +93,17 @@ This is based on the IDL and is the typescript version of the IDL file. It expos
 Thanks to `Anchor` it is very easy to write integration tests against the program. The tests resides in the `/tests` folder. Right now it uses the SDK to interact with the program.
 
 > NOTE: it is possible to interact directly with the program but this often requires a bunch of boilerplate and cluttering.
+
+If you have made changes to the program you should run
+
+```bash
+// builds the Solstream programs and updates the IDL
+anchor build
+// builds the Solstream sdk
+anchor run build_sdk
+// Runs the tests in /tests
+anchor test
+```
 
 ## Deployment
 

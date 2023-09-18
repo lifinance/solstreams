@@ -26,7 +26,7 @@
   },
   "scripts": {
     "idl": "cp ../target/types/solstreams.ts ./src/idl/solstreams.ts",
-    "build": "rm -rf dist && tsc --build --verbose tsconfig.json",
+    "build": "rm -rf dist && yarn idl && tsc --build --verbose tsconfig.json",
     "release": "yarn build && release  --push --public",
     "release:minor": "yarn release - --minor --public ",
     "example": "ts-node -r tsconfig-paths/register ./examples/index.ts"

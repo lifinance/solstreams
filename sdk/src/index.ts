@@ -6,11 +6,12 @@ import { BN } from 'bn.js';
 export { Solstreams, IDL };
 
 const SOLSTREAM = 'solstream';
+const SOLSTREAM_ADDRESS = 'strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV';
 
 export const getStreamPDA = (streamName: string) => {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from(SOLSTREAM), Buffer.from('stream'), Buffer.from(streamName)],
-    new anchor.web3.PublicKey(IDL.metadata.address)
+    new anchor.web3.PublicKey(SOLSTREAM_ADDRESS)
   );
 };
 
@@ -25,7 +26,7 @@ export const getEventPDA = (
       streamAccount.toBuffer(),
       nonce,
     ],
-    new anchor.web3.PublicKey(IDL.metadata.address)
+    new anchor.web3.PublicKey(SOLSTREAM_ADDRESS)
   );
 };
 
@@ -59,7 +60,7 @@ export class Solstream {
       preflightCommitment: 'recent',
       commitment: 'confirmed',
     });
-    return new anchor.Program<Solstreams>(IDL, IDL.metadata.address, provider);
+    return new anchor.Program<Solstreams>(IDL, SOLSTREAM_ADDRESS, provider);
   };
 
   initializeStreamIx = async (streamName: string) => {
