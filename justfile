@@ -6,7 +6,7 @@ build:
 # Build the Solstream sdk 
 build_sdk:
     @echo "Building Solstreams SDK..."
-    cd sdk && cargo build-bpf
+    anchor run build_sdk
 
 # Test project using the sdk
 test: build build_sdk
