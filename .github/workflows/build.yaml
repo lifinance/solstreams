@@ -8,7 +8,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: 'Solana Anchor build'
-        uses: mrgnlabs/anchor-build-action@v0.3
-      - name: 'Solana anchor test'
-        uses: mrgnlabs/anchor-test-action@v0.5
+        uses: metadaoproject/setup-anchor@v1.1
+        with:
+          anchor-version: '0.26.0'
+          solana-cli-version: '1.16.0'
+          node-version: '18.0.0'
+      - run: anchor build
+        shell: bash
+      - run: anchor test
+        shell: bash
