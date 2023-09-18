@@ -33,20 +33,20 @@ export const getEventPDA = (
 export class Solstream {
   protected program: anchor.Program<Solstreams>;
   constructor(
-    readonly keypair: anchor.web3.Keypair,
+    readonly signer: anchor.web3.PublicKey,
     readonly connection?: anchor.web3.Connection
   ) {
-    this.program = this.setUpAnchorProgram({
-      keypair,
+    this.program = Solstream.setUpAnchorProgram({
+      keypair: anchor.web3.Keypair.generate(),
       tryConnection: connection,
     });
   }
 
-  /**
+  private static /**
    * setUpAnchorProgram sets up a dummy program with fake wallet and connection
    * @returns
    */
-  private setUpAnchorProgram = ({
+  setUpAnchorProgram = ({
     keypair,
     tryConnection,
   }: {
@@ -60,6 +60,7 @@ export class Solstream {
       preflightCommitment: 'recent',
       commitment: 'confirmed',
     });
+
     return new anchor.Program<Solstreams>(IDL, SOLSTREAM_ADDRESS, provider);
   };
 
@@ -69,6 +70,7 @@ export class Solstream {
     const ix = await this.program.methods
       .createEventStream(streamName)
       .accounts({
+        signer: this.signer,
         stream: streamPDA[0],
       })
       .instruction();
@@ -101,6 +103,7 @@ export class Solstream {
     const ix = await this.program.methods
       .createEvent(eventNonce, eventName, data)
       .accounts({
+        owner: this.signer,
         event: eventPDA[0],
         eventStream: streamPDA[0],
       })
@@ -141,7 +144,7 @@ export class Solstream {
       recentBlockhash: (
         await this.program.provider.connection.getLatestBlockhash()
       ).blockhash,
-      payerKey: this.keypair.publicKey,
+      payerKey: this.signer,
     }).compileToV0Message();
 
     return new anchor.web3.VersionedTransaction(txMessage);

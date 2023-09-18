@@ -11,7 +11,11 @@ describe('event', () => {
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace.Solstreams as Program<Solstreams>;
-  const solstreamsdk = new Solstream(wallet.payer, program.provider.connection);
+  const solstreamsdk = new Solstream(
+    wallet.publicKey,
+    program.provider.connection
+  );
+
   it('Try to create a stream!', async () => {
     // Add your test here.
     const streamName = 'test-stream';
