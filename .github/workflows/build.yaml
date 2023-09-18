@@ -1,0 +1,14 @@
+name: 'Build and test program'
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Solana Anchor build'
+        uses: mrgnlabs/anchor-build-action@v0.3
+      - name: 'Solana anchor test'
+        uses: mrgnlabs/anchor-test-action@v0.5
