@@ -42,6 +42,7 @@ pub mod solstreams {
         ctx: Context<CreateEvent>,
         _nonce: Vec<u8>,
         name: String,
+
         data: Vec<u8>,
     ) -> Result<()> {
         let event = &mut ctx.accounts.event;
@@ -66,6 +67,8 @@ pub struct Event {
     stream_name: String,
     // name of the event
     name: String,
+    // versioning
+    version: u16,
     // when the event was created. Immutable
     created_at: i64,
     // bump seed for the stream
@@ -119,6 +122,9 @@ pub struct CreateEvent<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 
+    #[account(mut)]
+    pub user: Signer<'info>,
+
     #[account(mut,
         has_one=owner @ EventError::WrongStreamOwner,
         seeds=[
@@ -138,7 +144,7 @@ pub struct CreateEvent<'info> {
             event_stream.key().as_ref(),
             nonce.as_ref(),
         ],
-        payer=owner,
+        payer=user,
         bump,
         space=size_of::<Event>(),
     )]

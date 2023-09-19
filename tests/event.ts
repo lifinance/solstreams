@@ -11,8 +11,6 @@ describe('event', () => {
   // Configure the client to use the local cluster.
   const keypair = Keypair.generate();
 
-  // airdrop
-
   const wallet = new anchor.Wallet(keypair);
 
   const localAnchorProvider = anchor.AnchorProvider.env();

@@ -16,7 +16,7 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "localnet"
-wallet = "~/.config/solana/id_1.json"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 build_sdk = "yarn run build:sdk"
