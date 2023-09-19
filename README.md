@@ -10,7 +10,9 @@ Install Rust [here](https://www.rust-lang.org/tools/install)
 
 ### Solana
 
-Install the Solana Tool Suite [here](https://docs.solana.com/cli/install-solana-cli-tools)
+Install the **latest** Solana Tool Suite [here](https://docs.solana.com/cli/install-solana-cli-tools)
+
+> NOTE: if you get an `build-bpf` error it might be because your solana cli version is less than 1.16. Also make sure that solana is in your path by running `echo $PATH | grep solana`
 
 ### Yarn
 
@@ -25,6 +27,8 @@ The easiest way to install Anchor is by using `avm`. You can install avm using c
 ```bash
 cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
 ```
+
+After installing cargo please either source your .bashrc/.bash_profile (mac) or restart your terminal for the installed tools to be in your PATH.
 
 Then install use the latest Anchor version
 
