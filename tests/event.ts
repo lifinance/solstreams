@@ -4,14 +4,17 @@ import { expect } from 'chai';
 import { Solstream, Solstreams } from '../sdk/dist/cjs';
 import * as bs58 from 'bs58';
 import { BN } from 'bn.js';
+
 import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 describe('event', () => {
   // Configure the client to use the local cluster.
   const keypair = Keypair.generate();
+
   // airdrop
 
   const wallet = new anchor.Wallet(keypair);
+
   const localAnchorProvider = anchor.AnchorProvider.env();
   const provider = new anchor.AnchorProvider(
     localAnchorProvider.connection,
