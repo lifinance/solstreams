@@ -15,8 +15,6 @@ jobs:
           anchor-version: '0.26.0'
           solana-cli-version: '1.16.0'
           node-version: '18.0.0'
-      - run: source /root/.profile
-        shell: bash
       - run: /root/.local/share/solana/install/active_release/bin/solana-keygen new -o ~/.config/solana/id.json --force --no-bip39-passphrase
         shell: bash
       - run: anchor build
