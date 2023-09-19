@@ -4,17 +4,36 @@ import { expect } from 'chai';
 import { Solstream, Solstreams } from '../sdk/dist/cjs';
 import * as bs58 from 'bs58';
 import { BN } from 'bn.js';
+import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 describe('event', () => {
   // Configure the client to use the local cluster.
-  const wallet = anchor.Wallet.local();
-  anchor.setProvider(anchor.AnchorProvider.env());
+  const keypair = Keypair.generate();
+  // airdrop
+
+  const wallet = new anchor.Wallet(keypair);
+  const localAnchorProvider = anchor.AnchorProvider.env();
+  const provider = new anchor.AnchorProvider(
+    localAnchorProvider.connection,
+    wallet,
+    localAnchorProvider.opts
+  );
+  anchor.setProvider(provider);
 
   const program = anchor.workspace.Solstreams as Program<Solstreams>;
+
   const solstreamsdk = new Solstream(
     wallet.publicKey,
     program.provider.connection
   );
+
+  beforeEach(async () => {
+    const sig = await program.provider.connection.requestAirdrop(
+      keypair.publicKey,
+      5 * LAMPORTS_PER_SOL
+    );
+    await program.provider.connection.confirmTransaction(sig);
+  });
 
   it('Try to create a stream!', async () => {
     // Add your test here.
@@ -105,7 +124,6 @@ describe('event', () => {
 
     // create first event
     const eventName = 'test-event';
-    const eventDescription = 'test event description';
     const eventData = Buffer.from('test data');
     const nonce = Buffer.from('test nonce');
     const eventVtx1 = await solstreamsdk.createEventVtx(
