@@ -2,6 +2,27 @@
 
 Simple program that allows users to create a stream and add events to the stream.
 
+# Table of Contents
+
+1. [Setup](#setup)
+
+   1. [Rust](#rust)
+   2. [Solana](#rust)
+   3. [yarn](#yarn)
+   4. [anchor](#anchor)
+   5. [just](#just)
+
+2. [Development](#development)
+3. [Build](#build)
+4. [Testing](#testing)
+5. [Deployment](#deployment)
+6. [Miscellaneous](#misc)
+
+   1. [build_sdk](#build_sdk)
+   2. [Missing keypair](#missing-keypair)
+   3. [IDL](#idl)
+   4. [ProgramId](#programid)
+
 ## Setup
 
 It's adviced to follow the install instructions for each tool rather than using software package management system (e.g. homebrew on mac).
@@ -142,4 +163,38 @@ This will deposit the fees into the deployment wallet.
 
 # Misc
 
-## build_sdk command
+## build_sdk
+
+The Solstreams SDK is used in the integration tests. Therefore, when changes are made to the program it is wise to run
+
+```zsh
+just build_sdk
+```
+
+The [command](./justfile) will build the program and the SDK with the newest [IDL](#idl).
+
+## Missing keypair
+
+In [anchor.toml](Anchor.toml) the file specified under wallet need to exist. If it does not exist commands like `anchor test`/`just test` will fail. In order to solve this run
+
+```zsh
+just generate_keypair id
+```
+
+It will not overwrite an existing key so it's safe to use.
+
+## IDL
+
+The `anchor build` command not only compiles the program into target/deploy but it also generates an [IDL](<https://en.wikipedia.org/wiki/IDL_(programming_language)>) in `target/idl`. This IDL can be passed to the Anchor typescript SDK and be used to generate transactions. This reduces a lot of boilerplate.
+
+## ProgramID
+
+The programId is the address of the account holding the compiled program. It is therefore unique and the keypair for the account is found in `target/deploy`.
+
+When you deploy your program it is important that the address in [`program_id!()`](./programs/solstreams/src/lib.rs#L4) matches that of the public key address of the keypair in [`target/deplo/solstreams-keypair.json`](./target/deploy/solstreams-keypair.json). You can check the address of the keypair by running the just command
+
+```zsh
+just get_program_address
+```
+
+The output should match the address in [`program_id!()`](./programs/solstreams/src/lib.rs#L4). Also, the address is typed statically in the [sdk](./sdk/src/index.ts#L9).

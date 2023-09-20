@@ -4,12 +4,12 @@ build:
     anchor build 
 
 # Build the Solstream sdk 
-build_sdk:
+build_sdk: build
     @echo "Building Solstreams SDK..."
     anchor run build_sdk
 
 # Test project using the sdk
-test: build build_sdk
+test: build_sdk
     @echo "Testing Solstreams..."
     anchor test
 
@@ -39,7 +39,7 @@ generate_keypair NAME:
     @echo "Generating keypair..."
     solana-keygen new -o ~/.config/solana/{{NAME}}.json --no-bip39-passphrase
 
-# Check program keypair address
-check_program_address:
+# Get program keypair address
+get_program_address:
     @echo "Checking program address..."
     solana address --keypair target/deploy/solstreams-keypair.json
