@@ -4,12 +4,12 @@ build:
     anchor build 
 
 # Build the Solstream sdk 
-build_sdk:
+build_sdk: build
     @echo "Building Solstreams SDK..."
     anchor run build_sdk
 
 # Test project using the sdk
-test: build build_sdk
+test: build_sdk
     @echo "Testing Solstreams..."
     anchor test
 

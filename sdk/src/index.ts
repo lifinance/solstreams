@@ -34,6 +34,8 @@ export class Solstream {
   protected program: anchor.Program<Solstreams>;
   constructor(
     readonly signer: anchor.web3.PublicKey,
+    readonly user: anchor.web3.PublicKey,
+    readonly eventVersion: number,
     readonly connection?: anchor.web3.Connection
   ) {
     this.program = Solstream.setUpAnchorProgram({
@@ -101,9 +103,10 @@ export class Solstream {
     const eventPDA = getEventPDA(streamPDA[0], eventNonce);
 
     const ix = await this.program.methods
-      .createEvent(eventNonce, eventName, data)
+      .createEvent(eventNonce, eventName, data, this.eventVersion)
       .accounts({
         owner: this.signer,
+        user: this.user,
         event: eventPDA[0],
         eventStream: streamPDA[0],
       })

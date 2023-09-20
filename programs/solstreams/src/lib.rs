@@ -42,8 +42,8 @@ pub mod solstreams {
         ctx: Context<CreateEvent>,
         _nonce: Vec<u8>,
         name: String,
-
         data: Vec<u8>,
+        version: u16,
     ) -> Result<()> {
         let event = &mut ctx.accounts.event;
         event.name = name;
@@ -54,6 +54,7 @@ pub mod solstreams {
         let clock = Clock::get()?;
         event.created_at = clock.unix_timestamp;
         event.epoch = clock.epoch;
+        event.version = version;
 
         Ok(())
     }
@@ -67,7 +68,9 @@ pub struct Event {
     stream_name: String,
     // name of the event
     name: String,
-    // versioning
+    // allow versioning of events. This can be useful
+    // if you change your data schema and want to support
+    // older schemas without being backwards compatible
     version: u16,
     // when the event was created. Immutable
     created_at: i64,
@@ -118,14 +121,18 @@ pub struct CreateEventStream<'info> {
 )]
 /// CreateEvent is used to create an event on a stream
 pub struct CreateEvent<'info> {
-    /// owner must match the owner of the stream
+    /// owner is the owner of the stream
     #[account(mut)]
     pub owner: Signer<'info>,
 
+    /// user is the final payer of the
+    /// event creation
     #[account(mut)]
     pub user: Signer<'info>,
 
     #[account(mut,
+        // check that the owner field of Stream matches the 
+        // owner field of the CreateEvent instruction
         has_one=owner @ EventError::WrongStreamOwner,
         seeds=[
             b"solstream".as_ref(),
@@ -144,6 +151,7 @@ pub struct CreateEvent<'info> {
             event_stream.key().as_ref(),
             nonce.as_ref(),
         ],
+        // the user is the final payer of the event
         payer=user,
         bump,
         space=size_of::<Event>(),
