@@ -8,6 +8,11 @@ export { Solstreams, IDL };
 const SOLSTREAM = 'solstream';
 const SOLSTREAM_ADDRESS = 'strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV';
 
+/**
+ * getStreamPDA returns the stream program derived address
+ * @param streamName
+ * @returns
+ */
 export const getStreamPDA = (streamName: string) => {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from(SOLSTREAM), Buffer.from('stream'), Buffer.from(streamName)],
@@ -15,6 +20,13 @@ export const getStreamPDA = (streamName: string) => {
   );
 };
 
+/**
+ * getEventPDA returns the event program derived address
+ * for a given stream account and nonce
+ * @param streamAccount: Stream account
+ * @param nonce: Nonce for the event
+ * @returns: [PublicKey, bump]
+ */
 export const getEventPDA = (
   streamAccount: anchor.web3.PublicKey,
   nonce: Buffer
@@ -30,6 +42,9 @@ export const getEventPDA = (
   );
 };
 
+/**
+ * Solstream is the main class for interacting with Solstreams
+ */
 export class Solstream {
   protected program: anchor.Program<Solstreams>;
   constructor(
@@ -42,11 +57,11 @@ export class Solstream {
     });
   }
 
-  private static /**
+  /**
    * setUpAnchorProgram sets up a dummy program with fake wallet and connection
    * @returns
    */
-  setUpAnchorProgram = ({
+  private static setUpAnchorProgram = ({
     keypair,
     tryConnection,
   }: {
@@ -64,6 +79,11 @@ export class Solstream {
     return new anchor.Program<Solstreams>(IDL, SOLSTREAM_ADDRESS, provider);
   };
 
+  /**
+   * initializeStreamIx creates an instruction for creating a new stream on Solstreams
+   * @param streamName: Name of the stream
+   * @returns
+   */
   initializeStreamIx = async (streamName: string) => {
     const streamPDA = getStreamPDA(streamName);
 
@@ -81,6 +101,12 @@ export class Solstream {
     };
   };
 
+  /**
+   * initializeStreamVtx creates a versioned transaction with the instruction for creating
+   * a new stream on Solstreams
+   * @param streamName: Name of the stream
+   * @returns: An object containing the versioned transaction and the stream account PDA
+   */
   initializeStreamVtx = async (streamName: string) => {
     const streamIx = await this.initializeStreamIx(streamName);
     const vtx = await this.createVersionedTransaction([streamIx.ix]);
@@ -90,6 +116,14 @@ export class Solstream {
     };
   };
 
+  /**
+   * createEventIx creates an instruction for creating an event on Solstreams
+   * @param streamName: Name of the stream
+   * @param eventName:  Name of the event
+   * @param data: Data to be stored in the event
+   * @param nonce: Nonce for the event. If not given, a random nonce will be generated
+   * @returns: An object containing the instruction, the event account PDA and the stream account PDA
+   */
   createEventIx = async (
     streamName: string,
     eventName: string,
@@ -116,6 +150,15 @@ export class Solstream {
     };
   };
 
+  /**
+   * createEventVtx creates a versioned transaction with the instruction for creating an event
+   * on Solstreams
+   * @param streamName: Name of the stream
+   * @param eventName : Name of the event
+   * @param data: Data to be stored in the event
+   * @param nonce: Nonce for the event. If not given, a random nonce will be generated
+   * @returns An object containing the versionedtransaction, the event account PDA and the stream account PDA
+   */
   createEventVtx = async (
     streamName: string,
     eventName: string,
@@ -136,6 +179,12 @@ export class Solstream {
     };
   };
 
+  /**
+   * createVersionedTransaction takes a list of instructions and creates a versioned transaction
+   *
+   * @param ixs: instructions
+   * @returns
+   */
   createVersionedTransaction = async (
     ixs: anchor.web3.TransactionInstruction[]
   ) => {
@@ -150,6 +199,17 @@ export class Solstream {
     return new anchor.web3.VersionedTransaction(txMessage);
   };
 
+  /**
+   * getOrCreateEventVtx will check if the stream with streamName exists. If not it will
+   * be included in the versioned transaction together with the instruction for creating
+   * a new event.
+   *
+   * @param streamName: Name of the stream
+   * @param eventName: Name of the event
+   * @param data: Data to be stored in the event
+   * @param nonce: Nonce for the event. If not given, a random nonce will be generated
+   * @returns
+   */
   getOrCreateEventVtx = async (
     streamName: string,
     eventName: string,
@@ -182,9 +242,41 @@ export class Solstream {
   };
 
   /**
-   * getAllEventsOnStream
-   * @param streamName
-   * @param epoch
+   * getAllEventsOnStream finds the event accounts on a stream either
+   * over all epochs or a specific epoch
+   *
+   * It uses the [memcmp](https://docs.solana.com/api/http) object to compare
+   * given bytes to the bytes at a given offset in the account data. The filtering
+   * uses exact match.
+   *
+   * Solana account data are prefix padded with 8bytes to uniquely represent the account. In
+   * order to match exactly we need to know the layout of the data. The layout is found in the
+   * [program](../../programs/solstreams/src/lib.rs). The size of the datatypes can be found in
+   * the [anchor book](https://www.anchor-lang.com/docs/space).
+   *
+   * Example:
+   * If we want to match the stream name `my-stream` we need to know how far into the account data
+   * the stream name is stored. At the current writing, the event struct is
+   * ```rust
+   * pub struct Event {
+   *      // epoch is used for searching for events using memcmp
+   *      epoch: u64,
+   *      // stream_name is used for searching for events using memcmp
+   *     stream_name: String,
+   *    // name of the event
+   * ...
+   * }
+   *```
+   * The first 8 bytes is the discriminator. The next 8 bytes (64 bits) is reserved for the epoch. Finally,
+   * at 8+8 (=16) bytes is the stream name. However, stream_name is a string and according to the memory layout
+   * found in the anchor book a string is `4 + length of string in bytes`. Therefore, we need to move 4 bytes to
+   * the right to find the start of the string.
+   * Thus, we must match from byte 8(discriminator)+8(epoch)+4(string padding) = 20 bytes into the account data.
+   *
+   * The layout of the struct is really important! It is not easy to filter on the next field of the Event since from
+   * 20 bytes it is a string of unknown length. Thus, we don't know when the next field starts
+   * @param streamName: Name of the stream
+   * @param epoch: Epoch to filter on. If not given, all epochs are returned. Read more about epochs [here](https://www.helius.dev/blog/solana-slots-blocks-and-epochs)
    * @returns
    */
   getAllEventsOnStream = async (streamName: string, epoch?: number) => {
