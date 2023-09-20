@@ -33,3 +33,13 @@ recover_deploy:
 grind_key PREFIX:
     @echo "Grinding for keypair starting with $(PREFIX)..."
     solana-keygen grind --starts-with {{PREFIX}}:1 --ignore-case
+
+# Generate local keypair
+generate_keypair NAME:
+    @echo "Generating keypair..."
+    solana-keygen new -o ~/.config/solana/{{NAME}}.json --force --no-bip39-passphrase
+
+# Check program keypair address
+check_program_address:
+    @echo "Checking program address..."
+    solana address --keypair target/deploy/solstreams-keypair.json

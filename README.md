@@ -4,6 +4,8 @@ Simple program that allows users to create a stream and add events to the stream
 
 ## Setup
 
+It's adviced to follow the install instructions for each tool rather than using software package management system (e.g. homebrew on mac).
+
 ### Rust
 
 Install Rust [here](https://www.rust-lang.org/tools/install)
@@ -137,3 +139,7 @@ solana program close recover.json
 ```
 
 This will deposit the fees into the deployment wallet.
+
+# Misc
+
+## build_sdk command
