@@ -37,7 +37,7 @@ grind_key PREFIX:
 # Generate local keypair
 generate_keypair NAME:
     @echo "Generating keypair..."
-    solana-keygen new -o ~/.config/solana/{{NAME}}.json --force --no-bip39-passphrase
+    solana-keygen new -o ~/.config/solana/{{NAME}}.json --no-bip39-passphrase
 
 # Check program keypair address
 check_program_address:
