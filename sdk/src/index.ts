@@ -46,7 +46,7 @@ export const getEventPDA = (
  * Solstream is the main class for interacting with Solstreams
  */
 export class Solstream {
-  protected program: anchor.Program<Solstreams>;
+  public program: anchor.Program<Solstreams>;
   constructor(
     readonly signer: anchor.web3.PublicKey,
     readonly user: anchor.web3.PublicKey,
