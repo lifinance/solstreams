@@ -10,11 +10,10 @@ import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
 describe('event', () => {
   // Configure the client to use the local cluster.
   const keypair = Keypair.generate();
-
-  // airdrop
+  const user = Keypair.generate();
 
   const wallet = new anchor.Wallet(keypair);
-
+  const userWallet = new anchor.Wallet(user);
   const localAnchorProvider = anchor.AnchorProvider.env();
   const provider = new anchor.AnchorProvider(
     localAnchorProvider.connection,
@@ -27,6 +26,8 @@ describe('event', () => {
 
   const solstreamsdk = new Solstream(
     wallet.publicKey,
+    user.publicKey,
+    0,
     program.provider.connection
   );
 
@@ -36,6 +37,12 @@ describe('event', () => {
       5 * LAMPORTS_PER_SOL
     );
     await program.provider.connection.confirmTransaction(sig);
+
+    const sig2 = await program.provider.connection.requestAirdrop(
+      user.publicKey,
+      5 * LAMPORTS_PER_SOL
+    );
+    await program.provider.connection.confirmTransaction(sig2);
   });
 
   it('Try to create a stream!', async () => {
@@ -50,6 +57,8 @@ describe('event', () => {
       eventData
     );
     createEventVtx.vtx.sign([wallet.payer]);
+    createEventVtx.vtx.sign([userWallet.payer]);
+
     await program.provider.sendAndConfirm(createEventVtx.vtx);
 
     // find stream address
@@ -136,6 +145,7 @@ describe('event', () => {
       nonce
     );
     eventVtx1.vtx.sign([wallet.payer]);
+    eventVtx1.vtx.sign([userWallet.payer]);
     await program.provider.sendAndConfirm(eventVtx1.vtx);
 
     const eventVtx2 = await solstreamsdk.createEventVtx(
@@ -145,6 +155,7 @@ describe('event', () => {
       nonce
     );
     eventVtx2.vtx.sign([wallet.payer]);
+    eventVtx2.vtx.sign([userWallet.payer]);
     try {
       await program.provider.sendAndConfirm(eventVtx2.vtx);
       throw new Error("Shouldn't be here");
@@ -153,5 +164,26 @@ describe('event', () => {
         'Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0'
       );
     }
+  });
+
+  it('Create stream and event -> get the transaction hash of the event', async () => {
+    const streamName = 'test-stream';
+    const eventName = 'test-event';
+    const eventData = Buffer.from('test data');
+
+    const createEventVtx = await solstreamsdk.getOrCreateEventVtx(
+      streamName,
+      eventName,
+      eventData
+    );
+    createEventVtx.vtx.sign([wallet.payer]);
+    createEventVtx.vtx.sign([userWallet.payer]);
+
+    await program.provider.sendAndConfirm(createEventVtx.vtx);
+
+    const eventSigs = await solstreamsdk.getAllEventsOnStreamWithMetadata(
+      streamName
+    );
+    expect(eventSigs[0].signatures.length).to.equal(1);
   });
 });

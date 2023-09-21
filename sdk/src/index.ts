@@ -46,9 +46,11 @@ export const getEventPDA = (
  * Solstream is the main class for interacting with Solstreams
  */
 export class Solstream {
-  protected program: anchor.Program<Solstreams>;
+  public program: anchor.Program<Solstreams>;
   constructor(
     readonly signer: anchor.web3.PublicKey,
+    readonly user: anchor.web3.PublicKey,
+    readonly eventVersion: number,
     readonly connection?: anchor.web3.Connection
   ) {
     this.program = Solstream.setUpAnchorProgram({
@@ -135,9 +137,10 @@ export class Solstream {
     const eventPDA = getEventPDA(streamPDA[0], eventNonce);
 
     const ix = await this.program.methods
-      .createEvent(eventNonce, eventName, data)
+      .createEvent(eventNonce, eventName, data, this.eventVersion)
       .accounts({
         owner: this.signer,
+        user: this.user,
         event: eventPDA[0],
         eventStream: streamPDA[0],
       })
@@ -296,6 +299,42 @@ export class Solstream {
         },
       });
     }
+
     return this.program.account.event.all(memcmpFiters);
+  };
+
+  /**
+   * getAllEventsOnStreamWithMetadata is the same as getAllEventsOnStream but also returns
+   * the signatures of the transactions for the events.
+   *
+   * Since the events are immutable it is expected that signatures only contain one element
+   *
+   * @param streamName
+   * @param epoch
+   * @param commitment
+   * @returns
+   */
+  getAllEventsOnStreamWithMetadata = async (
+    streamName: string,
+    epoch?: number,
+    commitment?: anchor.web3.Finality
+  ) => {
+    const events = await this.getAllEventsOnStream(streamName, epoch);
+
+    const sigs = await Promise.all(
+      events.map((event) =>
+        this.program.provider.connection.getConfirmedSignaturesForAddress2(
+          event.publicKey,
+          {},
+          commitment ?? 'confirmed'
+        )
+      )
+    );
+    return events.map((event, i) => {
+      return {
+        event,
+        signatures: sigs[i],
+      };
+    });
   };
 }

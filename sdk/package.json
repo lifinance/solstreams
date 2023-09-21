@@ -1,6 +1,6 @@
 {
   "name": "solstreams-sdk",
-  "version": "0.25.0",
+  "version": "0.26.1",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -20,14 +20,15 @@
     "bs58": "^5.0.0"
   },
   "devDependencies": {
+    "standard-version": "^9.5.0",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "yarn-release": "^1.10.6",
-    "ts-node": "^10.9.1"
+    "yarn-release": "^1.10.6"
   },
   "scripts": {
     "idl": "cp ../target/types/solstreams.ts ./src/idl/solstreams.ts",
     "build": "rm -rf dist && yarn idl && tsc --build --verbose tsconfig.json",
-    "release": "yarn build && release  --push --public",
+    "release": "yarn build && standard-version",
     "release:minor": "yarn release - --minor --public ",
     "example": "ts-node -r tsconfig-paths/register ./examples/index.ts"
   }

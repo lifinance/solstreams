@@ -51,7 +51,16 @@ export type Solstreams = {
           "isMut": true,
           "isSigner": true,
           "docs": [
-            "owner must match the owner of the stream"
+            "owner is the owner of the stream"
+          ]
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "user is the final payer of the",
+            "event creation"
           ]
         },
         {
@@ -82,6 +91,10 @@ export type Solstreams = {
         {
           "name": "data",
           "type": "bytes"
+        },
+        {
+          "name": "version",
+          "type": "u16"
         }
       ]
     }
@@ -103,6 +116,10 @@ export type Solstreams = {
           {
             "name": "name",
             "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "u16"
           },
           {
             "name": "createdAt",
@@ -206,7 +223,16 @@ export const IDL: Solstreams = {
           "isMut": true,
           "isSigner": true,
           "docs": [
-            "owner must match the owner of the stream"
+            "owner is the owner of the stream"
+          ]
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "user is the final payer of the",
+            "event creation"
           ]
         },
         {
@@ -237,6 +263,10 @@ export const IDL: Solstreams = {
         {
           "name": "data",
           "type": "bytes"
+        },
+        {
+          "name": "version",
+          "type": "u16"
         }
       ]
     }
@@ -258,6 +288,10 @@ export const IDL: Solstreams = {
           {
             "name": "name",
             "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "u16"
           },
           {
             "name": "createdAt",
