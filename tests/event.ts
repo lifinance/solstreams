@@ -165,4 +165,42 @@ describe('event', () => {
       );
     }
   });
+
+  it('Create stream and event -> get the transaction hash of the event', async () => {
+    const streamName = 'test-stream';
+    const eventName = 'test-event';
+    const eventData = Buffer.from('test data');
+
+    const createEventVtx = await solstreamsdk.getOrCreateEventVtx(
+      streamName,
+      eventName,
+      eventData
+    );
+    createEventVtx.vtx.sign([wallet.payer]);
+    createEventVtx.vtx.sign([userWallet.payer]);
+
+    await program.provider.sendAndConfirm(createEventVtx.vtx);
+
+    // find stream address
+    const eventAccount = await program.account.event.fetch(
+      createEventVtx.eventAccountPDA[0]
+    );
+
+    const sigs =
+      await program.provider.connection.getConfirmedSignaturesForAddress2(
+        createEventVtx.eventAccountPDA[0],
+        {},
+        'confirmed'
+      );
+
+    await program.provider.connection.getSignaturesForAddress(
+      createEventVtx.eventAccountPDA[0],
+      {
+        limit: 100,
+      },
+      'confirmed'
+    );
+
+    console.log('sigs: ', sigs);
+  });
 });
