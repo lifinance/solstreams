@@ -43,3 +43,8 @@ generate_keypair NAME:
 get_program_address:
     @echo "Checking program address..."
     solana address --keypair target/deploy/solstreams-keypair.json
+
+# Release SDK
+release_sdk:
+    @echo "Releasing Solstreams SDK..."
+    yarn run release:sdk
