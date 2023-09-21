@@ -299,6 +299,42 @@ export class Solstream {
         },
       });
     }
+
     return this.program.account.event.all(memcmpFiters);
+  };
+
+  /**
+   * getAllEventsOnStreamWithMetadata is the same as getAllEventsOnStream but also returns
+   * the signatures of the transactions for the events.
+   *
+   * Since the events are immutable it is expected that signatures only contain one element
+   *
+   * @param streamName
+   * @param epoch
+   * @param commitment
+   * @returns
+   */
+  getAllEventsOnStreamWithMetadata = async (
+    streamName: string,
+    epoch?: number,
+    commitment?: anchor.web3.Finality
+  ) => {
+    const events = await this.getAllEventsOnStream(streamName, epoch);
+
+    const sigs = await Promise.all(
+      events.map((event) =>
+        this.program.provider.connection.getConfirmedSignaturesForAddress2(
+          event.publicKey,
+          {},
+          commitment ?? 'confirmed'
+        )
+      )
+    );
+    return events.map((event, i) => {
+      return {
+        event,
+        signatures: sigs[i],
+      };
+    });
   };
 }

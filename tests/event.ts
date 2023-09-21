@@ -181,26 +181,9 @@ describe('event', () => {
 
     await program.provider.sendAndConfirm(createEventVtx.vtx);
 
-    // find stream address
-    const eventAccount = await program.account.event.fetch(
-      createEventVtx.eventAccountPDA[0]
+    const eventSigs = await solstreamsdk.getAllEventsOnStreamWithMetadata(
+      streamName
     );
-
-    const sigs =
-      await program.provider.connection.getConfirmedSignaturesForAddress2(
-        createEventVtx.eventAccountPDA[0],
-        {},
-        'confirmed'
-      );
-
-    await program.provider.connection.getSignaturesForAddress(
-      createEventVtx.eventAccountPDA[0],
-      {
-        limit: 100,
-      },
-      'confirmed'
-    );
-
-    console.log('sigs: ', sigs);
+    expect(eventSigs[0].signatures.length).to.equal(1);
   });
 });
