@@ -1,12 +1,12 @@
-import * as anchor from '@coral-xyz/anchor';
-import { Solstreams, IDL } from './idl/solstreams';
-import { randomBytes } from 'crypto';
-import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
-import { BN } from 'bn.js';
+import * as anchor from "@coral-xyz/anchor";
+import { Solstreams, IDL } from "./idl/solstreams";
+import { randomBytes } from "crypto";
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import { BN } from "bn.js";
 export { Solstreams, IDL };
 
-const SOLSTREAM = 'solstream';
-const SOLSTREAM_ADDRESS = 'strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV';
+const SOLSTREAM = "solstream";
+const SOLSTREAM_ADDRESS = "strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV";
 
 /**
  * getStreamPDA returns the stream program derived address
@@ -15,7 +15,7 @@ const SOLSTREAM_ADDRESS = 'strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV';
  */
 export const getStreamPDA = (streamName: string) => {
   return anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from(SOLSTREAM), Buffer.from('stream'), Buffer.from(streamName)],
+    [Buffer.from(SOLSTREAM), Buffer.from("stream"), Buffer.from(streamName)],
     new anchor.web3.PublicKey(SOLSTREAM_ADDRESS)
   );
 };
@@ -34,7 +34,7 @@ export const getEventPDA = (
   return anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from(SOLSTREAM),
-      Buffer.from('events'),
+      Buffer.from("events"),
       streamAccount.toBuffer(),
       nonce,
     ],
@@ -72,10 +72,10 @@ export class Solstream {
   }) => {
     const wallet = new anchor.Wallet(keypair);
     const connection =
-      tryConnection ?? new anchor.web3.Connection('https://api.solana.com');
+      tryConnection ?? new anchor.web3.Connection("https://api.solana.com");
     const provider = new anchor.AnchorProvider(connection, wallet, {
-      preflightCommitment: 'recent',
-      commitment: 'confirmed',
+      preflightCommitment: "recent",
+      commitment: "confirmed",
     });
 
     return new anchor.Program<Solstreams>(IDL, SOLSTREAM_ADDRESS, provider);
@@ -295,7 +295,7 @@ export class Solstream {
       memcmpFiters.unshift({
         memcmp: {
           offset: 8,
-          bytes: bs58.encode(new BN(epoch).toBuffer('le', 8)),
+          bytes: bs58.encode(new BN(epoch).toBuffer("le", 8)),
         },
       });
     }
@@ -326,7 +326,7 @@ export class Solstream {
         this.program.provider.connection.getConfirmedSignaturesForAddress2(
           event.publicKey,
           {},
-          commitment ?? 'confirmed'
+          commitment ?? "confirmed"
         )
       )
     );
