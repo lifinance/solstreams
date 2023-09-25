@@ -1,13 +1,13 @@
-import * as anchor from '@coral-xyz/anchor';
-import { Program } from '@coral-xyz/anchor';
-import { expect } from 'chai';
-import { Solstream, Solstreams } from '../sdk/dist/cjs';
-import * as bs58 from 'bs58';
-import { BN } from 'bn.js';
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { expect } from "chai";
+import { Solstream, Solstreams } from "../sdk/dist/cjs";
+import * as bs58 from "bs58";
+import { BN } from "bn.js";
 
-import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
-describe('event', () => {
+describe("event", () => {
   // Configure the client to use the local cluster.
   const keypair = Keypair.generate();
   const user = Keypair.generate();
@@ -45,11 +45,11 @@ describe('event', () => {
     await program.provider.connection.confirmTransaction(sig2);
   });
 
-  it('Try to create a stream!', async () => {
+  it("Try to create a stream!", async () => {
     // Add your test here.
-    const streamName = 'test-stream';
-    const eventName = 'test-event';
-    const eventData = Buffer.from('test data');
+    const streamName = "test-stream";
+    const eventName = "test-event";
+    const eventData = Buffer.from("test data");
 
     const createEventVtx = await solstreamsdk.getOrCreateEventVtx(
       streamName,
@@ -71,8 +71,8 @@ describe('event', () => {
       createEventVtx.eventAccountPDA[0]
     );
     expect(eventAccount.name).to.equal(eventName);
-    expect(eventAccount.data.toString('base64')).to.equal(
-      eventData.toString('base64')
+    expect(eventAccount.data.toString("base64")).to.equal(
+      eventData.toString("base64")
     );
 
     const epoch = await program.provider.connection.getEpochInfo();
@@ -81,7 +81,7 @@ describe('event', () => {
       {
         memcmp: {
           offset: 8,
-          bytes: bs58.encode(new BN(epoch.epoch).toBuffer('le', 8)),
+          bytes: bs58.encode(new BN(epoch.epoch).toBuffer("le", 8)),
         },
       },
       {
@@ -94,9 +94,9 @@ describe('event', () => {
     expect(eventAccountFromStream.length).equal(1);
   });
 
-  it('Try to create the same stream twice -> should fail since streams are unique!', async () => {
+  it("Try to create the same stream twice -> should fail since streams are unique!", async () => {
     // Add your test here.
-    const streamName = 'test-stream_2';
+    const streamName = "test-stream_2";
     const createStreamVtx = await solstreamsdk.initializeStreamVtx(streamName);
     createStreamVtx.vtx.sign([wallet.payer]);
     await program.provider.sendAndConfirm(createStreamVtx.vtx);
@@ -117,7 +117,7 @@ describe('event', () => {
       throw new Error("Shouldn't be here");
     } catch (e) {
       expect(e.toString()).to.equal(
-        'Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0'
+        "Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0"
       );
     }
 
@@ -128,16 +128,16 @@ describe('event', () => {
     expect(streamAccountRetry.name).to.equal(streamName);
   });
 
-  it('Try to create the same event twice -> should fail since events are unique!', async () => {
-    const streamName = 'test-stream_3';
+  it("Try to create the same event twice -> should fail since events are unique!", async () => {
+    const streamName = "test-stream_3";
     const createStreamVtx = await solstreamsdk.initializeStreamVtx(streamName);
     createStreamVtx.vtx.sign([wallet.payer]);
     await program.provider.sendAndConfirm(createStreamVtx.vtx);
 
     // create first event
-    const eventName = 'test-event';
-    const eventData = Buffer.from('test data');
-    const nonce = Buffer.from('test nonce');
+    const eventName = "test-event";
+    const eventData = Buffer.from("test data");
+    const nonce = Buffer.from("test nonce");
     const eventVtx1 = await solstreamsdk.createEventVtx(
       streamName,
       eventName,
@@ -161,15 +161,15 @@ describe('event', () => {
       throw new Error("Shouldn't be here");
     } catch (e) {
       expect(e.toString()).to.equal(
-        'Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0'
+        "Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0"
       );
     }
   });
 
-  it('Create stream and event -> get the transaction hash of the event', async () => {
-    const streamName = 'test-stream';
-    const eventName = 'test-event';
-    const eventData = Buffer.from('test data');
+  it("Create stream and event -> get the transaction hash of the event", async () => {
+    const streamName = "test-stream";
+    const eventName = "test-event";
+    const eventData = Buffer.from("test data");
 
     const createEventVtx = await solstreamsdk.getOrCreateEventVtx(
       streamName,
