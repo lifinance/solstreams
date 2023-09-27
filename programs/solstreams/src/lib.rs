@@ -121,14 +121,14 @@ pub struct CreateEventStream<'info> {
 )]
 /// CreateEvent is used to create an event on a stream
 pub struct CreateEvent<'info> {
-    /// owner is the owner of the stream
-    #[account(mut)]
-    pub owner: Signer<'info>,
-
     /// user is the final payer of the
     /// event creation
     #[account(mut)]
     pub user: Signer<'info>,
+
+    /// owner is the owner of the stream
+    #[account(mut)]
+    pub owner: Signer<'info>,
 
     #[account(mut,
         // check that the owner field of Stream matches the 
