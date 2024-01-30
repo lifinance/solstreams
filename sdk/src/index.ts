@@ -138,7 +138,7 @@ export class Solstream {
      * @param nonce Nonce for the event. If not given, a random nonce will be generated
      * @returns: An object containing the instruction, the event account PDA and the stream account PDA
      */
-    protected createEventIx = async <T>(
+    protected createEventIx = async (
         streamName: string,
         eventName: string,
         data: Buffer,
@@ -174,16 +174,16 @@ export class Solstream {
      * @param nonce Nonce for the event. If not given, a random nonce will be generated
      * @returns An object containing the versionedTransaction, the event account PDA and the stream account PDA
      */
-    public createEventVtx = async <T>(
+    public createEventVtx = async (
         streamName: string,
         eventName: string,
-        data: T,
+        data: Buffer,
         nonce?: Buffer
     ) => {
         const eventIx = await this.createEventIx(
             streamName,
             eventName,
-            Buffer.from(JSON.stringify(data)),
+            data,
             nonce
         );
         const vtx = await this.createVersionedTransaction([eventIx.ix]);

@@ -23,4 +23,4 @@ wallet = "~/.config/solana/id.json"
 
 [scripts]
 build_sdk = "pnpm run build:sdk"
-test = "pnpm run test"
+test = "jest"

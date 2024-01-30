@@ -3,7 +3,7 @@
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "test": "jest",
+    "test": "anchor test",
     "build:sdk": "cd sdk && pnpm run build"
   },
   "dependencies": {

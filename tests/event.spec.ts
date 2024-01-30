@@ -104,7 +104,6 @@ describe("event", () => {
     });
 
     it("Try to create the same stream twice -> should fail since streams are unique!", async () => {
-        // Add your test here.
         const streamName = "test-stream_2";
         const createStreamVtx = await solstreamsdk.initializeStreamVtx(streamName);
         createStreamVtx.vtx.sign([wallet.payer]);
@@ -121,7 +120,7 @@ describe("event", () => {
             streamName
         );
         createStreamVtxRetry.vtx.sign([wallet.payer]);
-        await expect(program.provider.sendAndConfirm(createStreamVtxRetry.vtx)).rejects.toThrowError(
+        await expect(program.provider.sendAndConfirm(createStreamVtxRetry.vtx)).rejects.toThrow(
             "failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0"
         );
 
@@ -160,7 +159,7 @@ describe("event", () => {
         );
         eventVtx2.vtx.sign([wallet.payer]);
         eventVtx2.vtx.sign([userWallet.payer]);
-        await expect(program.provider.sendAndConfirm(eventVtx2.vtx)).rejects.toThrowError(
+        await expect(program.provider.sendAndConfirm(eventVtx2.vtx)).rejects.toThrow(
             "failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0"
         );
     });
