@@ -15,11 +15,7 @@ jobs:
           anchor-version: '0.29.0'
           solana-cli-version: '1.17.15'
           node-version: '20.10.0'
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        id: pnpm-install
-        with:
-          run_install: true
+      - uses: ./.github/actions/install
       - run: anchor build
         shell: bash
       - run: anchor test --provider.wallet THIS_IS_A_TEST_KEY.json --skip-build
