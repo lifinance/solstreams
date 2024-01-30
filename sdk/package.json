@@ -30,5 +30,6 @@
     "cleanbuild": "pnpm run clean && pnpm run build",
     "build": "pnpm idl && tsc --build --verbose tsconfig.json",
     "example": "ts-node ./examples/index.ts"
-  }
+  },
+  "packageManager": "pnpm@8.12.0"
 }
