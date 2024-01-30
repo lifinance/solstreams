@@ -17,4 +17,5 @@ jobs:
           node-version: '20.10.0'
       - uses: ./.github/actions/install
       - run: anchor build
+      - run: anchor build_sdk
       - run: anchor test --provider.wallet THIS_IS_A_TEST_KEY.json --skip-build
