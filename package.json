@@ -3,7 +3,7 @@
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "test": "anchor test",
+    "test": "anchor test --provider.wallet THIS_IS_A_TEST_KEY.json --skip-buildt",
     "build:sdk": "cd sdk && pnpm run build"
   },
   "dependencies": {
