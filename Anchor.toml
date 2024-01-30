@@ -3,13 +3,16 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-solstreams = "strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV"
+solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
 
 [programs.devnet]
-solstreams = "strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV"
+solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
+
+[programs.testnet]
+solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
 
 [programs.mainnet]
-solstreams = "strMZGgbP9ZSv61K14burRv5LnWmb1YDTuvjyJK5KVV"
+solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
 
 [registry]
 url = "https://api.apr.dev"
@@ -19,5 +22,5 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-build_sdk = "yarn run build:sdk"
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+build_sdk = "pnpm run build:sdk"
+test = "jest"

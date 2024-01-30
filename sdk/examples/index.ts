@@ -1,37 +1,68 @@
-import * as solstream from "../dist/cjs";
-import * as web3 from "@solana/web3.js";
-import * as fs from "fs";
-import {Keypair} from "@solana/web3.js";
+import {Solstream} from "../dist/cjs";
+import {readFileSync} from "fs";
+import {
+    Keypair,
+    Connection,
+    BlockhashWithExpiryBlockHeight,
+    VersionedTransaction,
+    LAMPORTS_PER_SOL
+} from "@solana/web3.js";
 
 const main = async () => {
-  const homedir = require("os").homedir();
-  const rawdata = fs.readFileSync(`${homedir}/.config/solana/id.json`, "utf8");
-  const owner_secret = new Uint8Array(JSON.parse(rawdata));
-  const keypair = web3.Keypair.fromSecretKey(owner_secret);
-  const user = Keypair.generate();
+    const connection = new Connection("http://127.0.0.1:8899");
+    const latestBlockHash: BlockhashWithExpiryBlockHeight = await connection.getLatestBlockhash('finalized')
 
-  const connection = new web3.Connection("https://api.devnet.solana.com");
-  const solstreamSdk = new solstream.Solstream(keypair.publicKey, user.publicKey, 0, connection);
+    // Using user's default keypair as the owner of the stream
+    const homedir = require("os").homedir();
+    const rawdata = readFileSync(`${homedir}/.config/solana/id.json`, "utf8");
+    const ownerSecret = new Uint8Array(JSON.parse(rawdata));
+    const owner = Keypair.fromSecretKey(ownerSecret);
+    console.log(`owner: ${owner.publicKey.toBase58()}`)
 
-  const createEventResp = await solstreamSdk.getOrCreateEventVtx(
-    "test",
-    "test-event",
-    Buffer.from("hello")
-  );
-  createEventResp.vtx.sign([keypair]);
+    // Using randomly generated keypair as the user of the stream
+    const user = Keypair.generate()
+    console.log(`user: ${user.publicKey.toBase58()}`)
 
-  const sig = await connection.sendTransaction(createEventResp.vtx, {
-    maxRetries: 5,
-    skipPreflight: true,
-  });
 
-  await connection.confirmTransaction(
-    {
-      signature: sig,
-    } as web3.BlockheightBasedTransactionConfirmationStrategy,
-    "confirmed"
-  );
-  console.log("done: ", sig);
+    // Request airdrop for the user, since it's a new keypair
+    const airdrop = await connection.requestAirdrop(user.publicKey, LAMPORTS_PER_SOL)
+    console.log(`airdrop: ${airdrop}`)
+    await connection.confirmTransaction({
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: airdrop
+    }, 'finalized')
+
+
+    const solstreamSdk = new Solstream(owner.publicKey, user.publicKey, 1, connection);
+
+    const streamName = "My Object Stream";
+    const eventName = "Just another Event";
+
+    const createEventResp = await solstreamSdk.getOrCreateEventVtx(
+        streamName,
+        eventName,
+        Buffer.from(JSON.stringify("Some Event Content")),
+        undefined,
+        latestBlockHash
+    );
+
+    createEventResp.vtx.sign([user, owner]);
+
+    const vtx: VersionedTransaction = createEventResp.vtx
+
+    await connection.confirmTransaction({
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: await connection.sendTransaction(vtx)
+    });
+
+    const events = await solstreamSdk.getAllEventsOnStream(streamName)
+
+    events.forEach((event) => {
+        console.log(`stream: ${event.account.streamName}, event: ${event.account.name}, content: ${event.account.data}`)
+    })
 };
 
-main();
+main().then(() => {
+});

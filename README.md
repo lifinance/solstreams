@@ -8,7 +8,7 @@ Simple program that allows users to create a stream and add events to the stream
 
    1. [Rust](#rust)
    2. [Solana](#rust)
-   3. [yarn](#yarn)
+   3. [pnpm](#pnpm)
    4. [anchor](#anchor)
    5. [just](#just)
 
@@ -25,7 +25,7 @@ Simple program that allows users to create a stream and add events to the stream
 
 ## Setup
 
-It's adviced to follow the install instructions for each tool rather than using software package management system (e.g. homebrew on mac).
+It's advised to follow the installation instructions for each tool rather than using software package management system (e.g. homebrew on mac).
 
 ### Rust
 
@@ -37,9 +37,9 @@ Install the **latest** Solana Tool Suite [here](https://docs.solana.com/cli/inst
 
 > NOTE: if you get an `build-bpf` error it might be because your solana cli version is less than 1.16. Also make sure that solana is in your path by running `echo $PATH | grep solana`
 
-### Yarn
+### pnpm
 
-You can install Yarn [here](https://yarnpkg.com/getting-started/install)
+You can install pnpm [here](https://pnpm.io/installation)
 
 ### Anchor
 
@@ -105,7 +105,7 @@ You can generate your own keypair by running
 solana-keygen grind --starts-with STRM:1 --ignore-case
 ```
 
-Where this address will start with a case insensitive `strm`.
+Where this address will start with a case-insensitive `strm`.
 
 ### /target/idl
 
@@ -117,7 +117,7 @@ This is based on the IDL and is the typescript version of the IDL file. It expos
 
 ## Testing
 
-Thanks to `Anchor` it is very easy to write integration tests against the program. The tests resides in the `/tests` folder. Right now it uses the SDK to interact with the program.
+Thanks to `Anchor` it is very easy to write integration tests against the program. The tests reside in the `/tests` folder. Right now it uses the SDK to interact with the program.
 
 > NOTE: it is possible to interact directly with the program but this often requires a bunch of boilerplate and cluttering.
 
@@ -181,11 +181,11 @@ In [anchor.toml](Anchor.toml) the file specified under wallet need to exist. If 
 just generate_keypair id
 ```
 
-It will not overwrite an existing key so it's safe to use.
+It will not overwrite an existing key, so it's safe to use.
 
 ## IDL
 
-The `anchor build` command not only compiles the program into target/deploy but it also generates an [IDL](<https://en.wikipedia.org/wiki/IDL_(programming_language)>) in `target/idl`. This IDL can be passed to the Anchor typescript SDK and be used to generate transactions. This reduces a lot of boilerplate.
+The `anchor build` command not only compiles the program into target/deploy, but it also generates an [IDL](<https://en.wikipedia.org/wiki/IDL_(programming_language)>) in `target/idl`. This IDL can be passed to the Anchor typescript SDK and be used to generate transactions. This reduces a lot of boilerplate.
 
 ## ProgramID
 

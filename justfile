@@ -21,7 +21,7 @@ deploy_devnet:
 # Deploy Solstreams to a specific RPC_URL
 deploy RPC_URL:
     @echo "Deploying Solstreams..."
-    anchor deploy --provider.cluster {{RPC_URL}} --provider.wallet ~/.config/solana/id.json
+    anchor deploy --provider.cluster {{RPC_URL}} --provider.wallet ~/temp/id.json
 
 # Recover fees in case deployment failed
 recover_deploy:
@@ -47,4 +47,4 @@ get_program_address:
 # Release SDK
 release_sdk:
     @echo "Releasing Solstreams SDK..."
-    yarn run release:sdk
+    pnpn run release:sdk

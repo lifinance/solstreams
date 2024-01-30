@@ -12,10 +12,10 @@ jobs:
       - name: 'Solana Anchor build'
         uses: metadaoproject/setup-anchor@v1.1
         with:
-          anchor-version: '0.26.0'
-          solana-cli-version: '1.16.0'
-          node-version: '18.0.0'
-      - run: yarn
+          anchor-version: '0.29.0'
+          solana-cli-version: '1.17.15'
+          node-version: '20.10.0'
+      - run: pnpm
         shell: bash
       - run: anchor build
         shell: bash
