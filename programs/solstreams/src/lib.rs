@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::mem::size_of;
 
-declare_id!("HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv");
+declare_id!("STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo");
 
 #[error_code]
 pub enum EventError {

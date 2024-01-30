@@ -8,7 +8,7 @@ import {Blockhash, BlockhashWithExpiryBlockHeight, PublicKey, TransactionInstruc
 export {Solstreams, IDL};
 
 const SOLSTREAM = "solstream";
-const SOLSTREAM_ADDRESS = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv";
+const SOLSTREAM_ADDRESS = "STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo";
 
 type TransactionMessageArgs = {
     payerKey: PublicKey;

@@ -3,16 +3,16 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
+solstreams = "STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo"
 
 [programs.devnet]
-solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
+solstreams = "STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo"
 
 [programs.testnet]
-solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
+solstreams = "STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo"
 
 [programs.mainnet]
-solstreams = "HiqVLPNpvi18xWUtyfPTYQqyCqmjXStmWiSKkQxMNKvv"
+solstreams = "STRMsoUj1u6oEhDaG6gtECiixy5fKm1sNAyALaUhSBo"
 
 [registry]
 url = "https://api.apr.dev"
