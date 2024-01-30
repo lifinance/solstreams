@@ -25,6 +25,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install
+      - name: 'Solana Anchor build'
+        uses: metadaoproject/setup-anchor@v2
+        with:
+          anchor-version: '0.29.0'
+          solana-cli-version: '1.17.15'
+          node-version: '20.10.0'
+      - uses: ./.github/actions/install
+      - run: anchor build
+      - run: anchor run build_sdk
       - name: Install Dependencies
         run: cd sdk && pnpm install
       - name: Build SDK
