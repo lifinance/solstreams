@@ -31,6 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install
+      - name: Install Dependencies
+        run: cd sdk && pnpm install
       - name: Build SDK
         run: pnpm run build:sdk
       - name: Publish SDK
