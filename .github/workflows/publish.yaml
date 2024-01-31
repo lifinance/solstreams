@@ -13,8 +13,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - uses: ncipollo/release-action@v1
         with:
           draft: false
@@ -24,23 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install
-      - name: 'Solana Anchor build'
-        uses: metadaoproject/setup-anchor@v2
+      - uses: ./.github/actions/publish
         with:
-          anchor-version: '0.29.0'
-          solana-cli-version: '1.17.15'
-          node-version: '20.10.0'
-      - uses: ./.github/actions/install
-      - run: anchor build
-      - run: anchor run build_sdk
-      - name: Install Dependencies
-        run: cd sdk && pnpm install
-      - name: Build SDK
-        run: pnpm run build:sdk
-      - name: Publish SDK
-        run: |
-          pnpm publish --access public \
-          ${{ contains(github.ref_name, 'alpha') && '--tag alpha' || contains(github.ref_name, 'beta') && '--tag beta' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm_token: ${{ secrets.NPM_TOKEN }}
