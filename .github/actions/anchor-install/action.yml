@@ -1,0 +1,36 @@
+name: 'Install Anchor with cached modules'
+description: 'Run cargo install anchor-cli with cached modules'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-registry-
+
+    - name: Cache cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-git-
+
+    - name: Cache cargo build
+      uses: actions/cache@v4
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-build-target-
+
+    - name: Anchor Install
+      uses: metadaoproject/install-anchor@v2
+      with:
+        anchor-version: '0.29.0'
+        solana-cli-version: '1.17.15'
+        node-version: '20.10.0'
