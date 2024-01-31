@@ -1,0 +1,23 @@
+name: 'Publish'
+description: 'Publish the project'
+inputs:
+  npm_token:
+    description: 'NPM token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Dependencies
+      run: cd sdk && pnpm install
+      shell: bash
+    - name: Build SDK
+      run: pnpm run build:sdk
+      shell: bash
+    - name: Publish SDK
+      run: |
+        cd sdk && pnpm publish --access public --no-git-checks \
+        ${{ contains(github.ref_name, 'alpha') && '--tag alpha' || contains(github.ref_name, 'beta') && '--tag beta' || '' }}
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npm_token }}

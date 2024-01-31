@@ -5,17 +5,12 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 'Solana Anchor build'
-        uses: metadaoproject/setup-anchor@v2
-        with:
-          anchor-version: '0.29.0'
-          solana-cli-version: '1.17.15'
-          node-version: '20.10.0'
-      - uses: ./.github/actions/install
+      - uses: ./.github/actions/anchor-install
+      - uses: ./.github/actions/npm-install
       - run: anchor build
-      - run: anchor run build_sdk
+      - run: pnpm run build:sdk
       - run: pnpm run test
