@@ -98,7 +98,7 @@ export class Solstream {
      * @param streamName Name of the stream
      * @returns
      */
-    protected initializeStreamIx = async (streamName: string) => {
+    public initializeStreamIx = async (streamName: string) => {
         const streamPDA = getStreamPDA(streamName);
 
         const ix = await this.program.methods
@@ -138,7 +138,7 @@ export class Solstream {
      * @param nonce Nonce for the event. If not given, a random nonce will be generated
      * @returns: An object containing the instruction, the event account PDA and the stream account PDA
      */
-    protected createEventIx = async (
+    public createEventIx = async (
         streamName: string,
         eventName: string,
         data: Buffer,
